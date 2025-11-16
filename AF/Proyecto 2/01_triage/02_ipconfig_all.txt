@@ -1,0 +1,35 @@
+
+Configuraci¢n IP de Windows
+
+   Nombre de host. . . . . . . . . : Win7Forense
+   Sufijo DNS principal  . . . . . : 
+   Tipo de nodo. . . . . . . . . . : h¡brido
+   Enrutamiento IP habilitado. . . : no
+   Proxy WINS habilitado . . . . . : no
+
+Adaptador de Ethernet Conexi¢n de  rea local:
+
+   Sufijo DNS espec¡fico para la conexi¢n. . : 
+   Descripci¢n . . . . . . . . . . . . . . . : Adaptador de escritorio Intel(R) PRO/1000 MT
+   Direcci¢n f¡sica. . . . . . . . . . . . . : 08-00-27-47-6E-82
+   DHCP habilitado . . . . . . . . . . . . . : s¡
+   Configuraci¢n autom tica habilitada . . . : s¡
+   Direcci¢n IPv6 . . . . . . . . . . : fd00::94ec:4148:ea83:39b3(Preferido) 
+   Direcci¢n IPv6 temporal. . . . . . : fd00::a57f:d067:8148:93f6(Preferido) 
+   V¡nculo: direcci¢n IPv6 local. . . : fe80::94ec:4148:ea83:39b3%11(Preferido) 
+   Direcci¢n IPv4 de configuraci¢n autom tica: 169.254.57.179(Preferido) 
+   M scara de subred . . . . . . . . . . . . : 255.255.0.0
+   Puerta de enlace predeterminada . . . . . : fe80::2%11
+   Servidores DNS. . . . . . . . . . . . . . : fec0:0:0:ffff::1%1
+                                       fec0:0:0:ffff::2%1
+                                       fec0:0:0:ffff::3%1
+   NetBIOS sobre TCP/IP. . . . . . . . . . . : habilitado
+
+Adaptador de t£nel isatap.{B0BDA0D2-368B-4B1F-8AA3-EE3B47BAD8CE}:
+
+   Estado de los medios. . . . . . . . . . . : medios desconectados
+   Sufijo DNS espec¡fico para la conexi¢n. . : 
+   Descripci¢n . . . . . . . . . . . . . . . : Adaptador ISATAP de Microsoft
+   Direcci¢n f¡sica. . . . . . . . . . . . . : 00-00-00-00-00-00-00-E0
+   DHCP habilitado . . . . . . . . . . . . . : no
+   Configuraci¢n autom tica habilitada . . . : s¡
