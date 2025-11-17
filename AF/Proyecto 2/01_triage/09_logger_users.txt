@@ -1,8 +1,0 @@
-
-Cuentas de usuario de \\WIN7FORENSE
-
--------------------------------------------------------------------------------
-Administrador            intruso1                 Invitado                 
-papa                     vboxuser                 
-Se ha completado el comando correctamente.
-

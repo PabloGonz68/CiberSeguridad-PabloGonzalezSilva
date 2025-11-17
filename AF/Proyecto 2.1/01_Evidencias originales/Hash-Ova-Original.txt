@@ -1,0 +1,4 @@
+Se calcula hash SHA-256 de la evidencia original (OVA).
+Archivo: FORENSIC_10.ova
+Hash: daf0ef5255d98276a6912a53611db5c0cbf2cccbb49a180dd7fcc0f95e14930c
+Integridad: confirmada.

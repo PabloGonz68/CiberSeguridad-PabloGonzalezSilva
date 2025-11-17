@@ -1,8 +1,0 @@
-
-Interfaz: 169.254.57.179 --- 0xb
-  Direcci¢n de Internet          Direcci¢n f¡sica      Tipo
-  10.0.2.2              52-55-0a-00-02-02     din mico  
-  169.254.255.255       ff-ff-ff-ff-ff-ff     est tico  
-  224.0.0.22            01-00-5e-00-00-16     est tico  
-  224.0.0.252           01-00-5e-00-00-fc     est tico  
-  255.255.255.255       ff-ff-ff-ff-ff-ff     est tico  
