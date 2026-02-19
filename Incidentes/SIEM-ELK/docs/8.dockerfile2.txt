@@ -1,0 +1,38 @@
+# Usamos la version 1.18 (Debian Buster)
+FROM nginx:1.18
+
+# ARREGLO 1: Repositorios antiguos
+RUN echo "deb http://archive.debian.org/debian buster main" > /etc/apt/sources.list \
+ && echo "deb http://archive.debian.org/debian-security buster/updates main" >> /etc/apt/sources.list \
+ && echo "Acquire::Check-Valid-Until false;" > /etc/apt/apt.conf.d/99ignore-valid-until
+
+# ARREGLO 2: Evitar que Snort pregunte cosas y bloquee la instalacion
+ENV DEBIAN_FRONTEND=noninteractive
+
+ENV FILEBEAT_VERSION 7.16.3
+
+# Instalamos curl, nano y snort (sin preguntas)
+RUN apt-get update -qq \
+ && apt-get install -qqy curl nano snort \
+ && apt-get clean
+
+# Descargamos Filebeat
+RUN curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-${FILEBEAT_VERSION}-amd64.deb \
+ && dpkg -i filebeat-${FILEBEAT_VERSION}-amd64.deb \
+ && rm filebeat-${FILEBEAT_VERSION}-amd64.deb
+
+# Configuracion de logs
+RUN rm /var/log/nginx/access.log /var/log/nginx/error.log
+
+# Copiamos archivos de configuracion
+ADD filebeat.yml /etc/filebeat/filebeat.yml
+RUN chmod 644 /etc/filebeat/filebeat.yml
+
+# Pagina web
+COPY html /usr/share/nginx/html
+
+# Script de arranque
+ADD ./start.sh /usr/local/bin/start.sh
+RUN chmod +x /usr/local/bin/start.sh
+
+CMD [ "/usr/local/bin/start.sh" ]

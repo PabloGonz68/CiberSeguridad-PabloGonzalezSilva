@@ -1,0 +1,90 @@
+output:
+  logstash:
+    enabled: true
+    hosts:
+      - "172.20.0.10:5044"
+    timeout: 15
+
+filebeat:
+  inputs:
+    # 1. Logs del Sistema
+    - type: log
+      enabled: true
+      paths:
+        - /var/log/syslog
+        - /var/log/auth.log
+      fields:
+        type: syslog
+
+    # 2. Logs de Nginx (Web)
+    - type: log
+      enabled: true
+      paths:
+        - "/var/log/nginx/*.log"
+      fields:
+        type: nginx-access
+
+    # 3. Logs de Snort (IDS) - ¡ESTA ES LA NUEVA PARTE!
+    - type: log
+      enabled: true
+      paths:
+        - /var/log/snort/alert
+      fields:
+        type: snort_logs
+
+
+        En la terminal (dentro de nano /etc/filebeat/filebeat.yml):
+
+Borra el contenido viejo.
+
+Pega este nuevo.
+
+Guarda con Ctrl + O y confirma con Enter.
+
+Sal con Ctrl + X.
+
+IMPORTANTE: Reinicia el servicio para que funcione:
+
+Bash
+service filebeat restart
+Ahora asegúrate de que Snort está corriendo para que genere ese archivo de alerta:
+
+Bash
+snort -q -D -c /etc/snort/snort.conf
+
+
+Gemini ha dicho
+¡Exacto! El error es claro: bash: ssh: command not found.
+
+Esto pasa porque el contenedor es "minimalista" y no trae el programa ssh instalado. Además, para que la regla que pusiste funcione (recuerda que pusimos flow:established), necesitas que haya un servidor SSH escuchando, si no, la conexión rebotará y Snort no detectará un "flujo establecido".
+
+Vamos a solucionar las dos cosas de un golpe (instalar el cliente para atacar y el servidor para recibir el ataque).
+
+Ejecuta estos 3 pasos dentro de tu terminal (dentro del contenedor):
+
+PASO 1: Instalar Cliente y Servidor SSH 🛠️
+Copia y pega esto:
+
+Bash
+apt-get install -y openssh-client openssh-server
+PASO 2: Arrancar el Servidor SSH 🟢
+Para que el puerto 22 se abra y Snort pueda detectar tráfico real:
+
+Bash
+service ssh start
+PASO 3: ¡ATACAR! ⚔️
+Ahora sí, intenta conectarte a ti mismo. Te pedirá contraseña (inventa una, fallará, y eso generará la alerta):
+
+Bash
+ssh root@localhost
+Si te pregunta "Are you sure...?", escribe yes.
+
+Si te pide "password", escribe 1234 (o lo que quieras).
+
+Hazlo un par de veces.
+
+PASO 4: Verificar la Alerta 👀
+Inmediatamente después, comprueba si Snort lo cazó:
+
+Bash
+cat /var/log/snort/alert

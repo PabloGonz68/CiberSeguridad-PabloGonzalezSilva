@@ -1,0 +1,35 @@
+# Dockerfile arreglado para la practica SIEM
+# Usamos la version 7.16.3 para coincidir con el servidor ELK
+
+FROM nginx
+
+# Definimos la version exacta
+ENV FILEBEAT_VERSION 7.16.3
+
+# Instalamos dependencias necesarias (curl)
+RUN apt-get update -qq \
+ && apt-get install -qqy curl \
+ && apt-get clean
+
+# Descargamos e instalamos Filebeat 7.16.3
+RUN curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-${FILEBEAT_VERSION}-amd64.deb \
+ && dpkg -i filebeat-${FILEBEAT_VERSION}-amd64.deb \
+ && rm filebeat-${FILEBEAT_VERSION}-amd64.deb
+
+# Configuracion de logs de Nginx
+RUN rm /var/log/nginx/access.log /var/log/nginx/error.log
+
+# Copiamos TU archivo de configuracion (el que editaste antes)
+ADD filebeat.yml /etc/filebeat/filebeat.yml
+# Le damos permisos correctos (importante para que Filebeat arranque)
+RUN chmod 644 /etc/filebeat/filebeat.yml
+
+# Copiamos la pagina web de ejemplo
+COPY html /usr/share/nginx/html
+
+# Script de arranque
+ADD ./start.sh /usr/local/bin/start.sh
+RUN chmod +x /usr/local/bin/start.sh
+
+# Arrancamos
+CMD [ "/usr/local/bin/start.sh" ]
