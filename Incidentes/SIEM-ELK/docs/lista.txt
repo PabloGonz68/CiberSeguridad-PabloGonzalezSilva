@@ -1,0 +1,23 @@
+1.docker-contenedor.png
+10.arrancar.nginx.png
+11.Filebeat+Nginx up.png
+12.Index-patterns.png
+13.create-index-pattern.png
+14.index-pattern creado.png
+15.SIEM Basico funcionando.png
+16.snort funcionando.png
+17.rule fuerza bruta.png
+18.filebeat3.txt
+19.carpetas-guardalogs-preataque.png
+2.apagar-ssl.png
+20.ataque-ssh.png
+21.ataque-ssh2.png
+22.SSH detectado en kibana.png
+3.ELK-levantado.png
+4.victima-github.png
+5.filebeat1.txt
+6.filebeat2.txt
+7.dockerfile1.txt
+8.dockerfile2.txt
+9.build-nginx.png
+lista.txt
