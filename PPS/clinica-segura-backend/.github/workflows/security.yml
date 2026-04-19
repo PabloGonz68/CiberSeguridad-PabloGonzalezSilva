@@ -1,0 +1,36 @@
+name: Seguridad DevSecOps (SAST & SCA)
+
+on:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  security-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # 1. Análisis RCA (OWASP Dependency Check)
+      - name: OWASP Dependency Check
+        uses: dependency-check/Dependency-Check_Action@main
+        with:
+          project: 'Clinica Segura'
+          path: '.'
+          format: 'HTML'
+          out: 'reports'
+
+      # 2. Análisis SAST (SonarQube Cloud)
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v6
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      # 3. Guardar el informe de OWASP para la entrega de tu máster
+      - name: Subir informe OWASP
+        uses: actions/upload-artifact@v4
+        with:
+          name: owasp-dependency-report
+          path: reports/
