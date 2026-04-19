@@ -18,7 +18,7 @@ jobs:
         uses: dependency-check/Dependency-Check_Action@main
         with:
           project: 'Clinica Segura'
-          path: '.'
+          path: 'PPS/clinica-segura-backend' # <--- Ahora sabe dónde buscar
           format: 'HTML'
           out: 'reports'
 
@@ -27,8 +27,13 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@v6
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          projectBaseDir: PPS/clinica-segura-backend # <--- Ahora sabe dónde buscar
+          args: >
+            -Dsonar.projectKey=clinica-segura-backend
+            -Dsonar.organization=TU_ORGANIZACION_AQUI
 
-      # 3. Guardar el informe de OWASP para la entrega de tu máster
+      # 3. Guardar el informe de OWASP
       - name: Subir informe OWASP
         uses: actions/upload-artifact@v4
         with:
