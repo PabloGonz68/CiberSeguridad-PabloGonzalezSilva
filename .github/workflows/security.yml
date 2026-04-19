@@ -31,7 +31,7 @@ jobs:
           projectBaseDir: PPS/clinica-segura-backend # <--- Ahora sabe dónde buscar
           args: >
             -Dsonar.projectKey=clinica-segura-backend
-            -Dsonar.organization=TU_ORGANIZACION_AQUI
+            -Dsonar.organization=clinica-segura-backend
 
       # 3. Guardar el informe de OWASP
       - name: Subir informe OWASP
