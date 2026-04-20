@@ -1,12 +1,17 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import helmet from 'helmet'; // Agregamos Helmet para mejorar la seguridad de los headers HTTP
+
+
+
 
 dotenv.config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(helmet()); // Usamos Helmet para proteger contra vulnerabilidades comunes
 
 // Importamos los middlewares de seguridad
 import { checkAuth, authorizeRole, checkAdoptionBenefit } from './middlewares/auth';
