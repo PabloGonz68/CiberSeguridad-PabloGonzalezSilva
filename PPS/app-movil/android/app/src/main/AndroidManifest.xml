@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  android/app/src/main/AndroidManifest.xml
+
+  Configuraciones de seguridad críticas:
+  ─ android:allowBackup="false"       → Previene extracción de datos por backup ADB (M9)
+  ─ android:fullBackupContent="false" → Deshabilita backup automático (M9)
+  ─ android:networkSecurityConfig     → Referencia a NSC que deshabilita cleartext (M5)
+  ─ android:debuggable="false"        → Nunca true en release builds (M7)
+  ─ Permisos mínimos necesarios
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.vetclinica.app">
+
+    <!-- ── Permisos mínimos (principio de mínimo privilegio) ──── -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- Biometría -->
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
+
+    <!-- ── SIN ESTOS PERMISOS (nunca solicitarlos) ─────────────
+         android.permission.READ_CONTACTS
+         android.permission.ACCESS_FINE_LOCATION
+         android.permission.CAMERA (salvo que se use para foto perfil)
+         android.permission.READ_EXTERNAL_STORAGE
+    ──────────────────────────────────────────────────────────── -->
+
+    <application
+        android:label="VetClinic"
+        android:name="${applicationName}"
+        android:icon="@mipmap/ic_launcher"
+
+        <!-- SEGURIDAD M9: Deshabilitar backup de datos de la app -->
+        android:allowBackup="false"
+        android:fullBackupContent="false"
+
+        <!-- SEGURIDAD M5: Referenciar Network Security Config -->
+        android:networkSecurityConfig="@xml/network_security_config"
+
+        <!-- SEGURIDAD M7: Deshabilitar debugging en release -->
+        android:debuggable="false"
+
+        <!-- Evitar que otras apps lean el contenido de la pantalla -->
+        android:hardwareAccelerated="true"
+
+        <!-- TaskAffinity vacío para prevenir task hijacking -->
+        android:taskAffinity="">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+
+            <!-- SEGURIDAD: FLAG_SECURE — previene capturas de pantalla -->
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/LaunchTheme"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+            android:hardwareAccelerated="true">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+
+            <meta-data
+                android:name="io.flutter.embedding.android.NormalTheme"
+                android:resource="@style/NormalTheme" />
+        </activity>
+
+        <!-- Deshabilitar backup de FileProvider si existe -->
+        <meta-data
+            android:name="com.google.android.backup.api_key"
+            android:value="unused" />
+    </application>
+
+</manifest>

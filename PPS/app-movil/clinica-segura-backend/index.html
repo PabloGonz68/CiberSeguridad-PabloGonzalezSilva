@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Clínica Segura - Tester</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+
+  <body class="min-h-screen bg-slate-50 text-slate-900">
+    <main class="mx-auto max-w-3xl p-6">
+      <h1 class="text-2xl font-semibold">Tester API - Clínica Segura</h1>
+      <p class="mt-1 text-sm text-slate-600">
+        Login contra Supabase → guarda JWT → llama a tu API en Render con <code>Authorization: Bearer</code>.
+      </p>
+
+      <section class="mt-6 rounded-lg border bg-white p-4">
+        <h2 class="text-lg font-medium">Login (Supabase)</h2>
+
+        <form id="loginForm" class="mt-4 grid gap-3">
+          <div class="grid gap-1">
+            <label for="email" class="text-sm font-medium">Email</label>
+            <input
+              id="email"
+              type="email"
+              autocomplete="email"
+              required
+              class="w-full rounded-md border px-3 py-2 text-sm outline-none focus:ring"
+              placeholder="usuario@ejemplo.com"
+            />
+          </div>
+
+          <div class="grid gap-1">
+            <label for="password" class="text-sm font-medium">Contraseña</label>
+            <input
+              id="password"
+              type="password"
+              autocomplete="current-password"
+              required
+              class="w-full rounded-md border px-3 py-2 text-sm outline-none focus:ring"
+              placeholder="••••••••"
+            />
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <button
+              id="loginBtn"
+              type="submit"
+              class="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800"
+            >
+              Iniciar Sesión
+            </button>
+
+            <button
+              id="clearTokenBtn"
+              type="button"
+              class="rounded-md border px-4 py-2 text-sm font-medium hover:bg-slate-50"
+            >
+              Borrar token
+            </button>
+
+            <span id="tokenInfo" class="text-sm text-slate-600"></span>
+          </div>
+        </form>
+      </section>
+
+      <section class="mt-6 rounded-lg border bg-white p-4">
+        <h2 class="text-lg font-medium">Probar API (Render)</h2>
+
+        <div class="mt-4 flex flex-wrap gap-2">
+          <button
+            id="perfilBtn"
+            type="button"
+            class="rounded-md border px-4 py-2 text-sm font-medium hover:bg-slate-50"
+          >
+            Ver Perfil
+          </button>
+
+          <button
+            id="historialBtn"
+            type="button"
+            class="rounded-md border px-4 py-2 text-sm font-medium hover:bg-slate-50"
+          >
+            Ver Historial Médico
+          </button>
+
+          <button
+            id="ofertasBtn"
+            type="button"
+            class="rounded-md border px-4 py-2 text-sm font-medium hover:bg-slate-50"
+          >
+            Ver Ofertas
+          </button>
+        </div>
+
+        <div class="mt-4">
+          <label class="text-sm font-medium">Respuesta (JSON)</label>
+          <pre
+            id="output"
+            class="mt-2 max-h-[420px] overflow-auto rounded-md border bg-slate-950 p-3 text-xs text-slate-100"
+          >{}</pre>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      /****************************
+       * CONFIG (rellena esto)
+       ****************************/
+      const SUPABASE_URL = "https://TU_PROYECTO.supabase.co";
+      const SUPABASE_KEY = "TU_CLAVE_ANON_PUBLICA";
+      const API_BASE = "https://clinica-pablo.onrender.com";
+      const TOKEN_STORAGE_KEY = "clinica.jwt";
+
+      /****************************
+       * Helpers
+       ****************************/
+      const outputEl = document.getElementById("output");
+      const tokenInfoEl = document.getElementById("tokenInfo");
+
+      const pretty = (obj) => JSON.stringify(obj, null, 2);
+
+      function setOutput(obj) {
+        outputEl.textContent = pretty(obj);
+      }
+
+      function getToken() {
+        return localStorage.getItem(TOKEN_STORAGE_KEY) || "";
+      }
+
+      function setToken(token) {
+        if (token) localStorage.setItem(TOKEN_STORAGE_KEY, token);
+        else localStorage.removeItem(TOKEN_STORAGE_KEY);
+        refreshTokenInfo();
+      }
+
+      function refreshTokenInfo() {
+        const token = getToken();
+        tokenInfoEl.textContent = token
+          ? `Token guardado (primeros 20 chars): ${token.slice(0, 20)}…`
+          : "Sin token";
+      }
+
+      async function safeJson(res) {
+        const text = await res.text();
+        try {
+          return text ? JSON.parse(text) : null;
+        } catch {
+          return { raw: text };
+        }
+      }
+
+      async function callApi(path) {
+        const token = getToken();
+        if (!token) {
+          setOutput({ ok: false, error: "No hay token. Inicia sesión primero." });
+          return;
+        }
+
+        const url = `${API_BASE}${path}`;
+        try {
+          const res = await fetch(url, {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          const data = await safeJson(res);
+          setOutput({
+            request: { method: "GET", url, headers: { Authorization: "Bearer <token>" } },
+            response: { ok: res.ok, status: res.status, data },
+          });
+        } catch (err) {
+          setOutput({ ok: false, error: String(err) });
+        }
+      }
+
+      /****************************
+       * Login (Supabase password grant)
+       ****************************/
+      document.getElementById("loginForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
+
+        if (!SUPABASE_URL.startsWith("https://") || SUPABASE_URL.includes("TU_PROYECTO")) {
+          setOutput({
+            ok: false,
+            error: "Configura SUPABASE_URL arriba (https://xxxxx.supabase.co).",
+          });
+          return;
+        }
+        if (!SUPABASE_KEY || SUPABASE_KEY.includes("TU_SUPABASE")) {
+          setOutput({
+            ok: false,
+            error: "Configura SUPABASE_KEY arriba (anon key).",
+          });
+          return;
+        }
+
+        const authUrl = SUPABASE_URL.replace(/\/$/, "") + "/auth/v1/token?grant_type=password";
+
+        try {
+          const res = await fetch(authUrl, {
+            method: "POST",
+            headers: {
+              apikey: SUPABASE_KEY,
+              Authorization: `Bearer ${SUPABASE_KEY}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email, password }),
+          });
+
+          const data = await safeJson(res);
+
+          if (!res.ok) {
+            setOutput({
+              request: { method: "POST", url: authUrl },
+              response: { ok: false, status: res.status, data },
+            });
+            return;
+          }
+
+          const token = data && data.access_token ? data.access_token : "";
+          if (!token) {
+            setOutput({
+              ok: false,
+              error: "Login OK pero no encontré access_token en la respuesta.",
+              data,
+            });
+            return;
+          }
+
+          setToken(token);
+
+          setOutput({
+            ok: true,
+            message: "Login correcto. JWT guardado en localStorage.",
+            access_token_preview: token.slice(0, 30) + "…",
+            full_response: data,
+          });
+        } catch (err) {
+          setOutput({ ok: false, error: String(err) });
+        }
+      });
+
+      document.getElementById("clearTokenBtn").addEventListener("click", () => {
+        setToken("");
+        setOutput({ ok: true, message: "Token borrado." });
+      });
+
+      /****************************
+       * Buttons
+       ****************************/
+      document.getElementById("perfilBtn").addEventListener("click", () => callApi("/api/perfil"));
+      document.getElementById("historialBtn").addEventListener("click", () => callApi("/api/historial-medico"));
+      document.getElementById("ofertasBtn").addEventListener("click", () => callApi("/api/tienda/ofertas-exclusivas"));
+
+      refreshTokenInfo();
+      setOutput({ ok: true, message: "Listo. Configura SUPABASE_URL/SUPABASE_KEY y prueba." });
+    </script>
+  </body>
+</html>
