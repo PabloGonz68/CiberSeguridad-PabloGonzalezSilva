@@ -4,6 +4,8 @@
 **Entorno de Pruebas:** Asistente basado en LLM con capacidades RAG (Retrieval-Augmented Generation) - NotebookLM  
 **Autor:** Pablo González Silva
 
+https://github.com/PabloGonz68/CiberSeguridad-PabloGonzalezSilva/tree/main/PPS/owasp-llm
+
 ---
 
 ## Introducción
