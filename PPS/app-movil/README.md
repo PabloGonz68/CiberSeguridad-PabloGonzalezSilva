@@ -17,7 +17,7 @@
 
 ## 🚀 Sobre el Proyecto
 
-**VetClinic** es una aplicación móvil desarrollada como complemento a la plataforma web "Clínica Segura". Está diseñada exclusivamente para el uso de los **clientes** de la clínica, permitiéndoles acceder a la tienda virtual, ver el catálogo de adopciones y gestionar su perfil y mascotas.
+**VetClinic** es una aplicación móvil desarrollada como complemento a la plataforma web "Clínica Segura". Está diseñada exclusivamente par>a el uso de los **clientes** de la clínica, permitiéndoles acceder a la tienda virtual, ver el catálogo de adopciones y gestionar su perfil y mascotas.
 
 Cumpliendo con los requisitos de seguridad, la aplicación **no contiene paneles de administración ni código con privilegios elevados**, delegando toda la lógica de autorización al backend. El ciclo de desarrollo se ha regido por los estándares del **OWASP Mobile Application Security Verification Standard (MASVS)**.
 
